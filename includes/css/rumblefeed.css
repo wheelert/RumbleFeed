@@ -1,0 +1,29 @@
+.rumblefeed {
+    column-count: 1;
+    column-gap: 2rem;
+  }
+  @media screen and (min-width: 768px) {
+    .rumblefeed {
+      column-count: 3;
+      column-gap: 5rem;
+    }
+  }
+
+.rumblefeed li a span {
+    clear: both;
+    display: block;
+    text-align: center;
+    width: 300px;
+    word-wrap: break-word;
+    padding-left: 30px;
+  }
+  .rumblefeed li {
+    list-style-type: none;
+    float: left;
+    min-height: 300px;
+    overflow: hidden;
+  }
+  
+  .rumblefeed li a img {
+    margin: 10px;
+  }
