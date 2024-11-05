@@ -60,7 +60,7 @@ function ww_rf_options_page()
 {
     register_setting( 'ww_rf', 'rf_channel' );
     register_setting( 'ww_rf', 'rf_pull' );
-    //register_setting( 'ww_rf', 'option_3' );
+ 
 
 
 	add_submenu_page(
@@ -136,19 +136,7 @@ function ww_rf_options_page_html() {
                     'rf_pull' // Should match Option ID
                 )  
             ); 
-            /** 
-            add_settings_field( // Option 3
-                'option_3', // Option ID
-                'Truth Social', // Label
-                'rf_textbox_callback', // !important - This is where the args go!
-                'ww_rf', // Page it will be displayed (General Settings)
-                'rf_settings_section', // Name of our section
-                array( // The $args
-                    'option_3' // Should match Option ID
-                )  
-            ); 
 
-            */
 			
 			settings_fields( 'ww_rf' );
 			do_settings_sections( 'ww_rf' );
