@@ -56,6 +56,30 @@ function display_feed($channel){
 // Admin page
 //
 
+//
+// add settings saved message
+//
+add_action( 'admin_notices', 'ww_rf_notice' );
+
+function ww_rf_notice() {
+
+	if(
+		isset( $_GET[ 'page' ] ) 
+		&& 'ww_rf' == $_GET[ 'page' ]
+		&& isset( $_GET[ 'settings-updated' ] ) 
+		&& true == $_GET[ 'settings-updated' ]
+	) {
+		?>
+			<div class="notice notice-success is-dismissible">
+				<p>
+					<strong>Settings saved.</strong>
+				</p>
+			</div>
+		<?php
+	}
+
+}
+
 function ww_rf_options_page()
 {
     register_setting( 'ww_rf', 'rf_channel' );
