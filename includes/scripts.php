@@ -262,7 +262,7 @@ $xml = '<?xml version="1.0" encoding="UTF-8"?>
 		}
 
 		$xml .= "<item>";
-		$xml .= "<title>".$title."</title>";
+        $xml .= "<title>".htmlspecialchars($title, ENT_QUOTES, "utf-8")."</title>";
 		$xml .= "<pubDate></pubDate>";
 		$xml .= "<guid isPermaLink='true'>".$url."</guid>";	
 		$xml .= "<itunes:image href='".$thumb."' />";
@@ -273,7 +273,7 @@ $xml = '<?xml version="1.0" encoding="UTF-8"?>
 
 	$xml .= '</channel></rss>';
 
-    $file1 = plugin_dir_path(__FILE__) ."rss.xml";
+    $file = plugin_dir_path(__FILE__) ."rss.xml";
     $fp = fopen($file, 'w');
     fwrite($fp, $xml);
     fclose($fp);
