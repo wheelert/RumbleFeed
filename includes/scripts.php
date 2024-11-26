@@ -206,19 +206,78 @@ function rf_do_pull_feed($args){
 add_action('wp_ajax_rf_pull_feed', 'rf_pull_feed');
 function rf_pull_feed(){
     $channel = get_option("rf_channel");
-    $url = "http://rssgen.xyz/rumble/".$channel;
 
-    $ch = curl_init();
+
+$url = "https://rumble.com/".$channel;
+
+$xml = '<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:media="http://search.yahoo.com/mrss/" version="2.0">
+   <channel>
+      <atom:link rel="self" type="application/rss+xml" />
+      <title>'.$channel.'</title>
+      <link>'.$url.'</link>
+      <description>-</description>
+      <language>en-US</language>';
+
+
+    $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); 
 
-    $file = plugin_dir_path(__FILE__) ."rss.xml";
-
-    $fp = fopen($file, 'w');
-
-    curl_setopt($ch, CURLOPT_FILE, $fp);
-    curl_exec ($ch);
+    //curl_setopt($ch, CURLOPT_FILE, $fp);
+    $html = curl_exec ($ch);
     curl_close ($ch);
+    //fclose($fp);
+
+    $doc = new DOMDocument();
+    libxml_use_internal_errors(true);
+    $doc->loadHTML($html); 
+    libxml_clear_errors();
+    $xpath = new \DOMXpath($doc);
+    $articles = $xpath->query('//div[@class="videostream thumbnail__grid--item"]');
+
+	foreach($articles as $container){
+		
+		$img = $container->getElementsByTagName("img");
+		$duration = $container->getElementsByTagName('div');
+		$links = $container->getElementsByTagName('a');
+		foreach($img as $item){
+			$thumb = $item->getAttribute("src");
+			$title = $item->getAttribute("alt");
+		}
+
+		foreach($duration as $item){
+			$classname = $item->getAttribute("class");
+			if($classname == "videostream__badge videostream__status videostream__status--duration"){
+				$duration = $item->nodeValue;
+			}
+
+		}
+
+		foreach($links as $link){
+		       if($classname="videostream__link link"){
+                         $url = "https://rumble.com".$link->getAttribute("href");  
+                        }
+		}
+
+		$xml .= "<item>";
+		$xml .= "<title>".$title."</title>";
+		$xml .= "<pubDate></pubDate>";
+		$xml .= "<guid isPermaLink='true'>".$url."</guid>";	
+		$xml .= "<itunes:image href='".$thumb."' />";
+		$xml .= "<media:thumbnail url='".$thumb."' />";
+		$xml .= "</item>";	
+
+	}
+
+	$xml .= '</channel></rss>';
+
+    $file1 = plugin_dir_path(__FILE__) ."rss.xml";
+    $fp = fopen($file, 'w');
+    fwrite($fp, $xml);
     fclose($fp);
+
 
     $response = array( 'success' => true);
     wp_send_json_success($response);
